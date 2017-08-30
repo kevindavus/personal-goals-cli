@@ -164,15 +164,12 @@ function newGoal(type, goal) {
   const date = moment().format('MMMDYYYYHHmm');
   let file = getFileName(type, goal);
   let completedfile = getFileName('completed/' + type + '/' + date, goal);
-  fs.ensureDir(conf.get('dir') + '/' + type)
+  fs.ensureDirSync(conf.get('dir') + '/' + type);
   fs.stat(completedfile, function (err, cstat) {
     if (err == null) {
       console.log('Moving goal from completed to ' + type);
-      fs.move(completedfile, file, function (err) {
-        if (err)
-          console.error(err);
-        console.log(ls(type))
-      });
+      fs.moveSync(completedfile, file);
+      console.log(ls(type));
     } else if (err.code == 'ENOENT') {
       fs.stat(file, function (err, stat) {
         if (err == null) {
@@ -180,7 +177,7 @@ function newGoal(type, goal) {
         } else if (err.code == 'ENOENT') {
           // file does not exist
           fs.closeSync(fs.openSync(file, 'w'));
-          console.log(ls(type))
+          console.log(ls('all'))
         } else {
           console.log('Some other error: ', err.code);
         }
@@ -194,11 +191,8 @@ function completeGoal(type, goal) {
   const date = moment().format('MMMDYYYYHHmm');
   const dir = conf.get('dir') + '/completed/' + type + '/' + date
   fs.ensureDir(dir)
-  fs.move(getFileName(type, goal), getFileName('completed/' + type + '/' + date, goal), function (err) {
-    if (err)
-      console.error(err);
-    console.log(ls('completed'))
-  });
+  fs.moveSync(getFileName(type, goal), getFileName('completed/' + type + '/' + date, goal));
+  console.log(ls('all'))
   writeMD();
 }
 
@@ -301,8 +295,8 @@ function print(type, opts = {}) {
 }
 
 function writeMD() {
-  fs.truncate("README.md", 0, function () {
-    fs.writeFile("README.md", genMD(), function (err) {
+  fs.truncate(conf.get('dir')+"/README.md", 0, function () {
+    fs.writeFile(conf.get('dir')+"/README.md", genMD(), function (err) {
       if (err) {
         return console.log("Error writing file: " + err);
       }
@@ -321,30 +315,21 @@ Personal goals made open source for accessibility across computers I use, transp
 ### This year's focus: ${conf.get('yearlyfocus')}
 
   
-${MDprint('yearly')} 
-${MDprint('completed/yearly')}
-  
+${MDprint('yearly')}${MDprint('completed/yearly')}
   
 # Weekly Goals ${date.format('MMM Do, YYYY')}:
 ### This week's focus: ${conf.get('weeklyfocus')}
 
-
-${MDprint('weekly')}
-${MDprint('completed/weekly')}
-
+${MDprint('weekly')}${MDprint('completed/weekly')}
 
 # Monthly Goals ${date.format('MMMM YYYY')}:
 ### This month's focus: ${conf.get('monthlyfocus')}
 
-
-${MDprint('monthly')} 
-${MDprint('completed/monthly')}
-  
+${MDprint('monthly')}${MDprint('completed/monthly')}  
 
 # Other Goals:
 
-${MDprint('other')} 
-${MDprint('completed/other')}`
+${MDprint('other')}${MDprint('completed/other')}`
   return res;
 }
 
