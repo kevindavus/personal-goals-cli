@@ -162,8 +162,8 @@ writeMD();
 
 function newGoal(type, goal) {
   const date = moment().format('MMMDYYYYHHmm');
-  let file = getFileName(type, prettyName(goal));
-  let completedfile = getFileName('completed/' + type + '/' + date, prettyName(goal));
+  let file = getFileName(type, goal);
+  let completedfile = getFileName('completed/' + type + '/' + date, goal);
   fs.ensureDir(conf.get('dir') + '/' + type)
   fs.stat(completedfile, function (err, cstat) {
     if (err == null) {
@@ -194,7 +194,7 @@ function completeGoal(type, goal) {
   const date = moment().format('MMMDYYYYHHmm');
   const dir = conf.get('dir') + '/completed/' + type + '/' + date
   fs.ensureDir(dir)
-  fs.move(getFileName(type, goal), getFileName('completed/' + type + '/' + date, prettyName(goal)), function (err) {
+  fs.move(getFileName(type, goal), getFileName('completed/' + type + '/' + date, goal), function (err) {
     if (err)
       console.error(err);
     console.log(ls('completed'))
@@ -204,7 +204,7 @@ function completeGoal(type, goal) {
 
 function getFileName(type, goal) {
   if (goal.length) {
-    return conf.get('dir') + '/' + type + '/' + goal.replace(/[ ./]/g, '_') + '.md';
+    return conf.get('dir') + '/' + type + '/' + goal.replace(/[ /.//]/g, '_') + '.md';
   }
   else {
     return conf.get('dir') + '/' + type;
@@ -277,6 +277,9 @@ function print(type, opts = {}) {
   let res = '';
   const path = getFileName(type, '');
   const files = fs.readdirSync(path);
+  if (!files.length) {
+    fs.removeSync(path)
+  }
   files.map((item) => {
     let stats = fs.statSync(path + '/' + item)
     if (stats.isDirectory()) {
@@ -310,60 +313,67 @@ function writeMD() {
 function genMD() {
   const date = moment().day(0);
   let res = `
-  Personal Goals
-  ==============
-  Personal goals made open source for accessibility across computers I use, transparency, accountability, and versioning. Learn more about it [here](http://una.im/personal-goals-guide).
+Personal Goals
+==============
+Personal goals made open source for accessibility across computers I use, transparency, accountability, and versioning. Learn more about it [here](http://una.im/personal-goals-guide).
 
-  # Overarching Goals for ${date.format('YYYY')}:
-  ### This year's focus: ${conf.get('yearlyfocus')}
+# Overarching Goals for ${date.format('YYYY')}:
+### This year's focus: ${conf.get('yearlyfocus')}
 
   
-  ${MDprint('yearly')} 
-  ${MDprint('completed/yearly')}
+${MDprint('yearly')} 
+${MDprint('completed/yearly')}
   
   
-  # Weekly Goals ${date.format('MMM Do, YYYY')}:
-  ### This week's focus: ${conf.get('weeklyfocus')}
+# Weekly Goals ${date.format('MMM Do, YYYY')}:
+### This week's focus: ${conf.get('weeklyfocus')}
 
 
-  ${MDprint('weekly')} 
-  ${MDprint('completed/weekly')}
+${MDprint('weekly')}
+${MDprint('completed/weekly')}
+
+
+# Monthly Goals ${date.format('MMMM YYYY')}:
+### This month's focus: ${conf.get('monthlyfocus')}
+
+
+${MDprint('monthly')} 
+${MDprint('completed/monthly')}
   
-  # Monthly Goals ${date.format('MMMM YYYY')}:
-  ### This month's focus: ${conf.get('monthlyfocus')}
 
+# Other Goals:
 
-  ${MDprint('monthly')} 
-  ${MDprint('completed/monthly')}
-  
-  # Other Goals:
-
-  ${MDprint('other')} 
-  ${MDprint('completed/other')}
-  `
+${MDprint('other')} 
+${MDprint('completed/other')}`
   return res;
 }
 
 function MDprint(type, opts = {}) {
   const dir = conf.get('dir') + '/' + type;
+  console.log(dir);
   fs.ensureDirSync(dir)
   let res = '';
   const path = getFileName(type, '');
   const files = fs.readdirSync(path);
+  if (!files.length) {
+    fs.removeSync(path)
+  }
   files.map((item) => {
-    let stats = fs.statSync(path + '/' + item)
-    if (stats.isDirectory()) {
-      if (item.match(/\w{3}\d{5,6}/g)) {
-        opts.date = item;
-      } else {
-        res += `\n ***${item}*** \n`;
-      }
-      res += MDprint(type + '/' + item, opts)
-    } else if (stats.isFile()) {
-      if (!opts.hasOwnProperty('date')) {
-        res += `* [ ] ${prettyName(item)}\n`;
-      } else {
-        res += `* [x] ${prettyName(item)} _- ${moment(opts.date,'MMMDYYYYHHmm').fromNow()}_\n`;
+    if (!item.startsWith('.')) {
+      let stats = fs.statSync(path + '/' + item)
+      if (stats.isDirectory()) {
+        if (item.match(/\w{3}\d{5,6}/g)) {
+          opts.date = item;
+        } else {
+          res += `\n***${item}***\n`;
+        }
+        res += MDprint(type + '/' + item, opts)
+      } else if (stats.isFile()) {
+        if (!opts.hasOwnProperty('date')) {
+          res += `* [ ] ${prettyName(item)}\n`;
+        } else {
+          res += `* [x] ${prettyName(item)} _- ${moment(opts.date, 'MMMDYYYYHHmm').fromNow()}_\n`;
+        }
       }
     }
   });
