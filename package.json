@@ -1,0 +1,42 @@
+{
+  "name": "personal-goals-cli",
+  "version": "1.0.0",
+  "description": "cli for managing personal goals",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevindavus/personal-goals.git"
+  },
+  "keywords": [
+    "cli",
+    "goals"
+  ],
+  "xo": {
+    "ignores": [
+      "test/_fixtures/**"
+    ],
+    "extends": "prettier"
+  },
+  "bin": {
+    "goals": "./cli.js"
+  },
+  "author": "kevindavus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevindavus/personal-goals/issues"
+  },
+  "homepage": "https://github.com/kevindavus/personal-goals#readme",
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "configstore": "^3.1.1",
+    "fs-extra": "^4.0.1",
+    "moment": "^2.18.1",
+    "pkg": "^4.2.4",
+    "request": "^2.81.0",
+    "terminal-menu": "^2.1.1",
+    "yargs": "^8.0.2"
+  }
+}
