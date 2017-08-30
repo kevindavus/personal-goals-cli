@@ -287,9 +287,9 @@ function print(type, opts = {}) {
       if (!opts.hasOwnProperty("date")) {
         res += prettyName(item) + "\n";
       } else {
-        res +=
-          `${chalk.green(prettyName(item))} ${chalk.gray("- " + opts.date)}` +
-          "\n";
+        res += `${chalk.green(prettyName(item))} ${chalk.gray(
+          "- " + moment(opts.date, "MMMDYYYYHHmm").fromNow()
+        )}\n`;
       }
     }
   });
@@ -361,7 +361,7 @@ function MDprint(type, opts = {}) {
           res += `* [x] ${prettyName(item)} _- ${moment(
             opts.date,
             "MMMDYYYYHHmm"
-          ).fromNow()}_\n`;
+          ).format("MMMM Do YYYY")}_\n`;
         }
       }
     }
