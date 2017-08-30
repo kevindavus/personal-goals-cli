@@ -7,8 +7,7 @@
   ### This year's focus: Do good things this year
 
   
-  * [ ] Testing
- 
+   
   
   
   
@@ -16,22 +15,18 @@
   ### This week's focus: Do good things this week
 
 
-  * [ ] Testing
- 
-  * [x] Testing2 _- 3 hours ago_
-
+   
+  
   
   # Monthly Goals August 2017:
   ### This month's focus: Do good things this month
 
 
-  * [ ] Testing
- 
+   
   
   
   # Other Goals:
 
-  * [ ] Testing
- 
+   
   
   
