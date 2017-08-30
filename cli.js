@@ -350,7 +350,6 @@ ${MDprint('completed/other')}`
 
 function MDprint(type, opts = {}) {
   const dir = conf.get('dir') + '/' + type;
-  console.log(dir);
   fs.ensureDirSync(dir)
   let res = '';
   const path = getFileName(type, '');
