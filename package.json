@@ -4,7 +4,8 @@
   "description": "cli for managing personal goals",
   "main": "cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "xo . --fix"
   },
   "repository": {
     "type": "git",
@@ -16,7 +17,7 @@
   ],
   "xo": {
     "ignores": [
-      "test/_fixtures/**"
+      "test/**"
     ],
     "extends": "prettier"
   },
@@ -32,12 +33,15 @@
   "dependencies": {
     "chalk": "^2.1.0",
     "configstore": "^3.1.1",
+    "eslint": "^4.5.0",
     "eslint-config-prettier": "^2.3.0",
     "fs-extra": "^4.0.1",
     "moment": "^2.18.1",
     "pkg": "^4.2.4",
+    "prettier": "^1.6.1",
     "request": "^2.81.0",
     "terminal-menu": "^2.1.1",
+    "xo": "^0.18.2",
     "yargs": "^8.0.2"
   }
 }
