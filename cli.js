@@ -10,7 +10,7 @@ const pkg = require("./package.json");
 const path = require("path");
 
 const conf = new Configstore(pkg.name, {
-  dir: path.join(fs.realpathSync(__dirname),"goals"),
+  dir: path.join(fs.realpathSync(__dirname), "goals"),
   weeklyfocus: "Do good things this week",
   monthlyfocus: "Do good things this month",
   yearlyfocus: "Do good things this year"
@@ -18,7 +18,9 @@ const conf = new Configstore(pkg.name, {
 const _ = require("lodash");
 const chalk = require("chalk");
 
-require("yargs")
+const yargs = require("yargs");
+
+yargs
   .command({
     command: "new [type] [goal]",
     aliases: ["n"],
@@ -82,7 +84,7 @@ require("yargs")
         case "o":
           type = "other";
           break;
-        default: 
+        default:
           type = argv.type;
           break;
       }
@@ -213,6 +215,10 @@ require("yargs")
   .example("clear", `$0 clear weekly`)
   .help().argv;
 
+if (yargs.argv._.length === 0) {
+  yargs.showHelp();
+}
+
 writeMD();
 
 function newGoal(type, goal) {
@@ -307,7 +313,7 @@ function clear(type) {
   if (type === "all") {
     fs.removeSync(path.join(conf.get("dir")));
   } else {
-    fs.removeSync(path.join(conf.get("dir"),  type));
+    fs.removeSync(path.join(conf.get("dir"), type));
   }
 }
 
@@ -321,11 +327,12 @@ function ls(type) {
   } else {
     const dir = path.join(conf.get("dir"), type);
     fs.ensureDir(dir);
+
     const title = prettyName(type) + " Tasks";
     res += "\n" + chalk.bold.underline(title) + "\n";
     res += print(type);
     if (type !== "completed") {
-      res += print(path.join("completed",type));
+      res += print(path.join("completed", type));
     }
   }
   return res;
@@ -360,7 +367,7 @@ function print(type, opts = {}) {
       } else {
         res += "\n" + chalk.underline(item) + "\n";
       }
-      res += print(path.join(type,item), opts);
+      res += print(path.join(type, item), opts);
     } else if (stats.isFile()) {
       if (!opts.hasOwnProperty("date")) {
         if (!item.startsWith(".")) {
