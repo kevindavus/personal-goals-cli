@@ -10,7 +10,7 @@ const pkg = require("./package.json");
 const path = require("path");
 
 const conf = new Configstore(pkg.name, {
-  dir: fs.realpathSync(__dirname),
+  dir: path.join(fs.realpathSync(__dirname),"goals"),
   weeklyfocus: "Do good things this week",
   monthlyfocus: "Do good things this month",
   yearlyfocus: "Do good things this year"
@@ -219,7 +219,7 @@ function newGoal(type, goal) {
   const date = moment().format("MMMDYYYYHHmm");
   const file = getFileName(type, goal);
   const completedfile = getFileName(path.join("completed", type, date), goal);
-  fs.ensureDirSync(path.join(conf.get("dir"), "goals", type));
+  fs.ensureDirSync(path.join(conf.get("dir"), type));
   fs.stat(completedfile, (err, cstat) => {
     if (err == null) {
       console.log("Moving goal from completed to " + type);
@@ -244,12 +244,12 @@ function newGoal(type, goal) {
 
 function completeGoal(type, goal) {
   const date = moment().format("MMMDYYYYHHmm");
-  const dir = path.join(conf.get("dir"), "goals", "completed", type, date);
+  const dir = path.join(conf.get("dir"), "completed", type, date);
   fs.ensureDirSync(dir);
-  fs.ensureDirSync(path.join(conf.get("dir"), "goals", type));
+  fs.ensureDirSync(path.join(conf.get("dir"), type));
   fs.moveSync(
     getFileName(type, goal),
-    getFileName(path.join("completed/", type, date), goal)
+    getFileName(path.join("completed", type, date), goal)
   );
   console.log(ls("all"));
   writeMD();
@@ -259,13 +259,12 @@ function getFileName(type, goal) {
   if (goal.length) {
     return path.join(
       conf.get("dir"),
-      "goals",
       type,
       goal.replace(/[ ]/g, "_").replace(/[//]/g, "-") + ".md"
     );
   }
 
-  return path.join(conf.get("dir"), "goals", type);
+  return path.join(conf.get("dir"), type);
 }
 
 function prettyName(file) {
@@ -306,13 +305,9 @@ function menu(type) {
 
 function clear(type) {
   if (type === "all") {
-    fs.removeSync(path.join(conf.get("dir"), "goals", "weekly"));
-    fs.removeSync(path.join(conf.get("dir"), "goals", "monthly"));
-    fs.removeSync(path.join(conf.get("dir"), "goals", "yearly"));
-    fs.removeSync(path.join(conf.get("dir"), "goals", "other"));
-    fs.removeSync(path.join(conf.get("dir"), "goals", "completed"));
+    fs.removeSync(path.join(conf.get("dir")));
   } else {
-    fs.removeSync(path.join(conf.get("dir"), "goals", type));
+    fs.removeSync(path.join(conf.get("dir"),  type));
   }
 }
 
@@ -324,20 +319,20 @@ function ls(type) {
     res += ls("yearly");
     res += ls("other");
   } else {
-    const dir = path.join(conf.get("dir"), "goals", type);
+    const dir = path.join(conf.get("dir"), type);
     fs.ensureDir(dir);
     const title = prettyName(type) + " Tasks";
     res += "\n" + chalk.bold.underline(title) + "\n";
     res += print(type);
     if (type !== "completed") {
-      res += print("completed/" + type);
+      res += print(path.join("completed",type));
     }
   }
   return res;
 }
 
 function print(type, opts = {}) {
-  const dir = path.join(conf.get("dir"), "goals", type);
+  const dir = path.join(conf.get("dir"), type);
   fs.ensureDirSync(dir);
   let res = "";
   const files = fs.readdirSync(dir);
@@ -365,7 +360,7 @@ function print(type, opts = {}) {
       } else {
         res += "\n" + chalk.underline(item) + "\n";
       }
-      res += print(type + "/" + item, opts);
+      res += print(path.join(type,item), opts);
     } else if (stats.isFile()) {
       if (!opts.hasOwnProperty("date")) {
         if (!item.startsWith(".")) {
@@ -421,7 +416,7 @@ ${MDprint("other")}${MDprint("completed/other")}`;
 }
 
 function MDprint(type, opts = {}) {
-  const dir = path.join(conf.get("dir"), "goals", type);
+  const dir = path.join(conf.get("dir"), type);
   fs.ensureDirSync(dir);
   let res = "";
   const files = fs.readdirSync(dir);
@@ -437,7 +432,7 @@ function MDprint(type, opts = {}) {
         } else {
           res += `\n***${item}***\n`;
         }
-        res += MDprint(type + "/" + item, opts);
+        res += MDprint(path.join(type, item), opts);
       } else if (stats.isFile()) {
         if (!opts.hasOwnProperty("date")) {
           res += `* [ ] ${prettyName(item)}\n`;
