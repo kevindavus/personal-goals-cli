@@ -47,6 +47,9 @@ require("yargs")
         case "o":
           type = "other";
           break;
+        default:
+          type = argv.type;
+          break;
       }
       newGoal(type, argv.goal);
     }
@@ -78,6 +81,9 @@ require("yargs")
         case "other":
         case "o":
           type = "other";
+          break;
+        default: 
+          type = argv.type;
           break;
       }
       if (argv.goal) {
@@ -119,6 +125,9 @@ require("yargs")
         case "a":
           type = "all";
           break;
+        default:
+          type = argv.type;
+          break;
       }
       console.log(ls(type));
     }
@@ -154,6 +163,9 @@ require("yargs")
         case "all":
         case "a":
           type = "all";
+          break;
+        default:
+          type = argv.type;
           break;
       }
       clear(type);
@@ -207,7 +219,7 @@ function newGoal(type, goal) {
   const date = moment().format("MMMDYYYYHHmm");
   const file = getFileName(type, goal);
   const completedfile = getFileName(path.join("completed", type, date), goal);
-  fs.ensureDirSync(path.join(conf.get("dir"), type));
+  fs.ensureDirSync(path.join(conf.get("dir"), "goals", type));
   fs.stat(completedfile, (err, cstat) => {
     if (err == null) {
       console.log("Moving goal from completed to " + type);
@@ -232,9 +244,9 @@ function newGoal(type, goal) {
 
 function completeGoal(type, goal) {
   const date = moment().format("MMMDYYYYHHmm");
-  const dir = conf.get("dir") + "/completed/" + type + "/" + date;
+  const dir = path.join(conf.get("dir"), "goals", "completed", type, date);
   fs.ensureDirSync(dir);
-  fs.ensureDirSync(path.join(conf.get("dir"), type));
+  fs.ensureDirSync(path.join(conf.get("dir"), "goals", type));
   fs.moveSync(
     getFileName(type, goal),
     getFileName(path.join("completed/", type, date), goal)
@@ -247,12 +259,13 @@ function getFileName(type, goal) {
   if (goal.length) {
     return path.join(
       conf.get("dir"),
+      "goals",
       type,
       goal.replace(/[ ]/g, "_").replace(/[//]/g, "-") + ".md"
     );
   }
 
-  return path.join(conf.get("dir"), type);
+  return path.join(conf.get("dir"), "goals", type);
 }
 
 function prettyName(file) {
@@ -293,13 +306,13 @@ function menu(type) {
 
 function clear(type) {
   if (type === "all") {
-    fs.removeSync(path.join(conf.get("dir"), "weekly"));
-    fs.removeSync(path.join(conf.get("dir"), "monthly"));
-    fs.removeSync(path.join(conf.get("dir"), "yearly"));
-    fs.removeSync(path.join(conf.get("dir"), "other"));
-    fs.removeSync(path.join(conf.get("dir"), "completed"));
+    fs.removeSync(path.join(conf.get("dir"), "goals", "weekly"));
+    fs.removeSync(path.join(conf.get("dir"), "goals", "monthly"));
+    fs.removeSync(path.join(conf.get("dir"), "goals", "yearly"));
+    fs.removeSync(path.join(conf.get("dir"), "goals", "other"));
+    fs.removeSync(path.join(conf.get("dir"), "goals", "completed"));
   } else {
-    fs.removeSync(path.join(conf.get("dir"), type));
+    fs.removeSync(path.join(conf.get("dir"), "goals", type));
   }
 }
 
@@ -311,7 +324,7 @@ function ls(type) {
     res += ls("yearly");
     res += ls("other");
   } else {
-    const dir = conf.get("dir") + "/" + type;
+    const dir = path.join(conf.get("dir"), "goals", type);
     fs.ensureDir(dir);
     const title = prettyName(type) + " Tasks";
     res += "\n" + chalk.bold.underline(title) + "\n";
@@ -324,7 +337,7 @@ function ls(type) {
 }
 
 function print(type, opts = {}) {
-  const dir = conf.get("dir") + "/" + type;
+  const dir = path.join(conf.get("dir"), "goals", type);
   fs.ensureDirSync(dir);
   let res = "";
   const files = fs.readdirSync(dir);
@@ -332,20 +345,20 @@ function print(type, opts = {}) {
     fs.removeSync(dir);
   }
   files.map(item => {
-    const stats = fs.statSync(dir + "/" + item);
+    const stats = fs.statSync(path.join(dir, item));
     if (stats.isDirectory()) {
       if (item.match(/\w{3}\d{9,10}/g)) {
         if (
           (path.basename(type) === "weekly" &&
-            moment(item, "MMMDYYYYHHmm").diff(moment(), "day") < 7) ||
+            moment(item, "MMMDYYYYHHmm").diff(moment(), "day") < -7) ||
           (path.basename(type) === "monthly" &&
-            moment(item, "MMMDYYYYHHmm").diff(moment(), "month") < 1) ||
+            moment(item, "MMMDYYYYHHmm").diff(moment(), "month") < 0) ||
           (path.basename(type) === "yearly" &&
-            moment(item, "MMMDYYYYHHmm").diff(moment(), "year") < 1)
+            moment(item, "MMMDYYYYHHmm").diff(moment(), "year") < 0)
         ) {
           fs.moveSync(
             path.join(dir, item),
-            path.join(conf.get("dir"), "past", path.basename(type))
+            getFileName("past", path.basename(type), item)
           );
         }
         opts.date = item;
@@ -369,8 +382,8 @@ function print(type, opts = {}) {
 }
 
 function writeMD() {
-  fs.truncate(conf.get("dir") + "/README.md", 0, () => {
-    fs.writeFile(conf.get("dir") + "/README.md", genMD(), err => {
+  fs.truncate(path.join(conf.get("dir"), "README.md"), 0, () => {
+    fs.writeFile(path.join(conf.get("dir"), "README.md"), genMD(), err => {
       if (err) {
         return console.log("Error writing file: " + err);
       }
@@ -408,17 +421,16 @@ ${MDprint("other")}${MDprint("completed/other")}`;
 }
 
 function MDprint(type, opts = {}) {
-  const dir = conf.get("dir") + "/" + type;
+  const dir = path.join(conf.get("dir"), "goals", type);
   fs.ensureDirSync(dir);
   let res = "";
-  const path = getFileName(type, "");
-  const files = fs.readdirSync(path);
+  const files = fs.readdirSync(dir);
   if (!files.length) {
-    fs.removeSync(path);
+    fs.removeSync(dir);
   }
   files.map(item => {
     if (!item.startsWith(".")) {
-      const stats = fs.statSync(path + "/" + item);
+      const stats = fs.statSync(path.join(dir, item));
       if (stats.isDirectory()) {
         if (item.match(/\w{3}\d{5,6}/g)) {
           opts.date = item;
