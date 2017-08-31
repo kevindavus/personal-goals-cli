@@ -206,8 +206,8 @@ writeMD();
 function newGoal(type, goal) {
   const date = moment().format("MMMDYYYYHHmm");
   const file = getFileName(type, goal);
-  const completedfile = getFileName("completed/" + type + "/" + date, goal);
-  fs.ensureDirSync(conf.get("dir") + "/" + type);
+  const completedfile = getFileName(path.join("completed", type, date), goal);
+  fs.ensureDirSync(path.join(conf.get("dir"), type));
   fs.stat(completedfile, (err, cstat) => {
     if (err == null) {
       console.log("Moving goal from completed to " + type);
@@ -237,7 +237,7 @@ function completeGoal(type, goal) {
   fs.ensureDirSync(path.join(conf.get("dir"), type));
   fs.moveSync(
     getFileName(type, goal),
-    getFileName("completed/" + type + "/" + date, goal)
+    getFileName(path.join("completed/", type, date), goal)
   );
   console.log(ls("all"));
   writeMD();
@@ -245,20 +245,18 @@ function completeGoal(type, goal) {
 
 function getFileName(type, goal) {
   if (goal.length) {
-    return (
-      conf.get("dir") + "/" + type + "/" + goal.replace(/[ /.//]/g, "_") + ".md"
+    return path.join(
+      conf.get("dir"),
+      type,
+      goal.replace(/[ ]/g, "_").replace(/[//]/g,"-")+".md"
     );
   }
 
-  return conf.get("dir") + "/" + type;
+  return path.join(conf.get("dir"), type);
 }
 
 function prettyName(file) {
-  let lastSlash = file.lastIndexOf("/") + 1;
-  let fileExt = file.lastIndexOf(".");
-  lastSlash = lastSlash === -1 ? 0 : lastSlash;
-  fileExt = fileExt === -1 ? 20 : fileExt;
-  const goal = file.substring(lastSlash, fileExt);
+  const goal = path.basename(file, path.extname(file));
   const ret = goal.replace(/_/g, " ").replace(/(\w)(\w*)/g, (_, i, r) => {
     return i.toUpperCase() + (r != null ? r : "");
   });
@@ -358,7 +356,9 @@ function print(type, opts = {}) {
       res += print(type + "/" + item, opts);
     } else if (stats.isFile()) {
       if (!opts.hasOwnProperty("date")) {
-        res += prettyName(item) + "\n";
+        if (!item.startsWith(".")) {
+          res += prettyName(item) + "\n";
+        }
       } else {
         res += `${chalk.green(prettyName(item))} ${chalk.gray(
           "- " + moment(opts.date, "MMMDYYYYHHmm").fromNow()
