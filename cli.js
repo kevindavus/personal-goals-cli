@@ -248,7 +248,7 @@ function getFileName(type, goal) {
     return path.join(
       conf.get("dir"),
       type,
-      goal.replace(/[ ]/g, "_").replace(/[//]/g,"-")+".md"
+      goal.replace(/[ ]/g, "_").replace(/[//]/g, "-") + ".md"
     );
   }
 
@@ -335,19 +335,18 @@ function print(type, opts = {}) {
     const stats = fs.statSync(dir + "/" + item);
     if (stats.isDirectory()) {
       if (item.match(/\w{3}\d{9,10}/g)) {
-        if (moment(item, "MMMDYYYYHHmm").diff(moment(), "day") < -7) {
-          /*fs.moveSync(
+        if (
+          (path.basename(type) === "weekly" &&
+            moment(item, "MMMDYYYYHHmm").diff(moment(), "day") < 7) ||
+          (path.basename(type) === "monthly" &&
+            moment(item, "MMMDYYYYHHmm").diff(moment(), "month") < 1) ||
+          (path.basename(type) === "yearly" &&
+            moment(item, "MMMDYYYYHHmm").diff(moment(), "year") < 1)
+        ) {
+          fs.moveSync(
             path.join(dir, item),
-            path.join(
-              conf.get("dir"),
-              "past",
-              path
-                .dirname(type)
-                .split(path.delimiter)
-                .pop()
-            )
-          );*/
-          console.log(path.dirname(dir));
+            path.join(conf.get("dir"), "past", path.basename(type))
+          );
         }
         opts.date = item;
       } else {
