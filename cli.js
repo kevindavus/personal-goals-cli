@@ -7,6 +7,7 @@ const Menu = require("terminal-menu");
 const moment = require("moment");
 const Configstore = require("configstore");
 const pkg = require("./package.json");
+const path = require("path");
 
 const conf = new Configstore(pkg.name, {
   dir: fs.realpathSync(__dirname),
@@ -119,7 +120,43 @@ require("yargs")
           type = "all";
           break;
       }
-      console.log(ls(type, ""));
+      console.log(ls(type));
+    }
+  })
+  .command({
+    command: "clear [type]",
+    aliases: ["clr"],
+    usage: `$0 clear  <w, m, y, o, c, a>`,
+    description: `clear goals of a type`,
+    builder: yargs => yargs.default("type", "a"),
+    handler: argv => {
+      let type;
+      switch (argv.type) {
+        case "weekly":
+        case "week":
+        case "w":
+          type = "weekly";
+          break;
+        case "monthly":
+        case "month":
+        case "m":
+          type = "monthly";
+          break;
+        case "yearly":
+        case "year":
+        case "y":
+          type = "yearly";
+          break;
+        case "other":
+        case "o":
+          type = "other";
+          break;
+        case "all":
+        case "a":
+          type = "all";
+          break;
+      }
+      clear(type);
     }
   })
   .command({
@@ -153,6 +190,15 @@ require("yargs")
   .example("new", `$0 n m 'lose 5 pounds'`)
   .example("complete", "$0 c other")
   .example("complete", `$0 complete week 'work out 3 times'`)
+  .example("config", "$0 cfg dir '/user/me/projects/personal-goals'")
+  .example("config", `$0 config weeklyfocus 'get outside more'`)
+  .example(
+    "complete",
+    "$0 config monthlyfocus 'punch as many nazis as possible'"
+  )
+  .example("config", `$0 cfg yearlyfocus 'destroy all nazis'`)
+  .example("clear", "$0 clear all")
+  .example("clear", `$0 clear weekly`)
   .help().argv;
 
 writeMD();
@@ -187,7 +233,8 @@ function newGoal(type, goal) {
 function completeGoal(type, goal) {
   const date = moment().format("MMMDYYYYHHmm");
   const dir = conf.get("dir") + "/completed/" + type + "/" + date;
-  fs.ensureDir(dir);
+  fs.ensureDirSync(dir);
+  fs.ensureDirSync(path.join(conf.get("dir"), type));
   fs.moveSync(
     getFileName(type, goal),
     getFileName("completed/" + type + "/" + date, goal)
@@ -219,8 +266,9 @@ function prettyName(file) {
 }
 
 function menu(type) {
-  const path = getFileName(type, "");
-  const files = fs.readdirSync(path);
+  const dir = getFileName(type, "");
+  fs.ensureDirSync(dir);
+  const files = fs.readdirSync(dir);
   const menu = Menu({ bg: "black", fg: "white" });
 
   menu.reset();
@@ -243,6 +291,18 @@ function menu(type) {
     process.stdin.setRawMode(false);
     process.stdin.end();
   });
+}
+
+function clear(type) {
+  if (type === "all") {
+    fs.removeSync(path.join(conf.get("dir"), "weekly"));
+    fs.removeSync(path.join(conf.get("dir"), "monthly"));
+    fs.removeSync(path.join(conf.get("dir"), "yearly"));
+    fs.removeSync(path.join(conf.get("dir"), "other"));
+    fs.removeSync(path.join(conf.get("dir"), "completed"));
+  } else {
+    fs.removeSync(path.join(conf.get("dir"), type));
+  }
 }
 
 function ls(type) {
@@ -269,15 +329,28 @@ function print(type, opts = {}) {
   const dir = conf.get("dir") + "/" + type;
   fs.ensureDirSync(dir);
   let res = "";
-  const path = getFileName(type, "");
-  const files = fs.readdirSync(path);
+  const files = fs.readdirSync(dir);
   if (!files.length) {
-    fs.removeSync(path);
+    fs.removeSync(dir);
   }
   files.map(item => {
-    const stats = fs.statSync(path + "/" + item);
+    const stats = fs.statSync(dir + "/" + item);
     if (stats.isDirectory()) {
       if (item.match(/\w{3}\d{9,10}/g)) {
+        if (moment(item, "MMMDYYYYHHmm").diff(moment(), "day") < -7) {
+          /*fs.moveSync(
+            path.join(dir, item),
+            path.join(
+              conf.get("dir"),
+              "past",
+              path
+                .dirname(type)
+                .split(path.delimiter)
+                .pop()
+            )
+          );*/
+          console.log(path.dirname(dir));
+        }
         opts.date = item;
       } else {
         res += "\n" + chalk.underline(item) + "\n";
