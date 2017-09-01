@@ -23,9 +23,9 @@ You can use `new` or `n` to create a new goal followed by the type (`yearly` or 
 
 The default is `weekly`
 ```
-goals new w 'track my personal goals' //creates a new weekly goal
-goals n other 'contribute to 3 open source projects' //creates a new 'other' goal
-goals n y 'survive another year' //creates a new yearly goal
+goals new w 'track my personal goals'                     #creates a new weekly goal
+goals n other 'contribute to 3 open source projects'      #creates a new 'other' goal
+goals n y 'survive another year'                          #creates a new yearly goal
 ```
 
 ## Marking a goal as completed
@@ -34,9 +34,9 @@ You can use `complete` or `c` to mark a goal as completed followed by the type (
 
 The default is `weekly`
 ```
-goals complete w //will list all weekly goals and allow you to choose which to mark as completed
-goals c //will list all weekly goals and allow you to choose which to mark as completed
-goals c y //will list all yearly goals and allow you to choose which to mark as completed
+goals complete w      #will list all weekly goals and allow you to choose which to mark as completed
+goals c               #will list all weekly goals and allow you to choose which to mark as completed
+goals c y             #will list all yearly goals and allow you to choose which to mark as completed
 ```
 
 ## Listing Goals
@@ -45,11 +45,11 @@ You can use `ls` or `list` to list goals followed by the type (`yearly` or `y`, 
 
 The default is `all`
 ```
-goals ls //lists all goals
-goals list //lists all goals
-goals ls c //lists all completed goals
-goals list y //lists all yearly goals
-goals ls weekly //lists all weekly goals
+goals ls             #lists all goals
+goals list           #lists all goals
+goals ls c           #lists all completed goals
+goals list y         #lists all yearly goals
+goals ls weekly      #lists all weekly goals
 ```
 
 ## Changing Config
@@ -66,9 +66,9 @@ goals cfg readme '/users/me/projects/personal-goals/'
 goals config weeklyfocus 'getting enough sleep'
 goals config monthlyfocus 'getting more involved in communities'
 goals cfg yearlyfocus 'surviving the nazi-pocalypse'
-goals config clear //will clear all config settings
-goals config clear weeklyfocus //will delete the weeklyfocus
-goals config ls //will list the current config settings
+goals config clear                      #will clear all config settings
+goals config clear weeklyfocus          #will delete the weeklyfocus
+goals config ls                         #will list the current config settings
 ```
 
 ## Clearing Goals 
@@ -77,9 +77,9 @@ You can use `clear` or `clr` to create a new goal followed by the type (`yearly`
 
 The default is `all`
 ```
-goals clr //deletes all goals
-goals clear weekly //deletes all weekly goals
-goals clr c //deletes all completed goals
+goals clr                  #deletes all goals
+goals clear weekly         #deletes all weekly goals
+goals clr c                #deletes all completed goals
 ```
 
 ### README:
