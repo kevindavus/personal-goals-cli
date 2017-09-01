@@ -3,6 +3,16 @@ Personal Goals CLI
 Inspired by [Una Kravets](http://una.im/personal-goals-guide)  
 Simple way to create and manage weekly/monthly/yearly/other goals
 
+To use: `npm install -g personal-goals-cli`  
+make sure to set the active directory and where to store your README!
+
+`goals cfg dir '/users/me/projects/personal-goals/goals'`
+
+`goals cfg readme '/users/me/projects/personal-goals/'`
+
+They can be the same, I just like the goals contained in their own folder 😀
+
+
 # Examples: 
 
 All commands will start with `goals`
