@@ -51,14 +51,14 @@ Possible configuration keys are `dir`, `readme`, `weeklyfocus`, `monthlyfocus`, 
 The `dir` is where your goals reside and `readme` is where you want the README.md to be generated
 
 ```
-cfg dir '/users/me/projects/personal-goals/goals'
-cfg readme '/users/me/projects/personal-goals/'
-config weeklyfocus 'getting enough sleep'
-config monthlyfocus 'getting more involved in communities'
-cfg yearlyfocus 'surviving the nazi-pocalypse'
-config clear //will clear all config settings
-config clear weeklyfocus //will delete the weeklyfocus
-config ls //will list the current config settings
+goals cfg dir '/users/me/projects/personal-goals/goals'
+goals cfg readme '/users/me/projects/personal-goals/'
+goals config weeklyfocus 'getting enough sleep'
+goals config monthlyfocus 'getting more involved in communities'
+goals cfg yearlyfocus 'surviving the nazi-pocalypse'
+goals config clear //will clear all config settings
+goals config clear weeklyfocus //will delete the weeklyfocus
+goals config ls //will list the current config settings
 ```
 
 ## Clearing Goals 
