@@ -3,7 +3,7 @@ Personal Goals CLI
 Inspired by [Una Kravets](http://una.im/personal-goals-guide)  
 Simple way to create and manage weekly/monthly/yearly/other goals
 
-To use: `npm install -g personal-goals-cli`  
+To use: `yarn global add personal-goals-cli`  
 make sure to set the active directory and where to store your README!
 
 `goals cfg dir '/users/me/projects/personal-goals/goals'`
