@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 "use strict";
 
+const yargs = require("yargs");
 const config = require("./lib/config").command;
 const clear = require("./lib/clear");
 const ls = require("./lib/ls").command;
 const complete = require("./lib/complete");
 const newCommand = require("./lib/new");
 
-const yargs = require("yargs");
-
-yargs
+yargs // eslint-disable-line no-unused-expressions
   .command(newCommand)
   .command(complete)
   .command(ls)
