@@ -100,27 +100,34 @@ goals clr c                #deletes all completed goals
 ```
 
 ### README:
-The generated README will be in the following format
+The generated README will be in the following format where the order of the goals is configurable. Just edit the generated README and reorder as you wish 
 
+```
 Personal Goals
 ==============
 Personal goals made open source for accessibility across computers I use, transparency, accountability, and versioning. Learn more about it [here](http://una.im/personal-goals-guide).
 
+<!-- goals yearly start-->
 # Overarching Goals for 2017:
 ### This year's focus: Do good things this year
 
   
 
-  
+<!-- goals yearly end-->
+<!-- goals weekly start-->
 # Weekly Goals Aug 27th, 2017:
 ### This week's focus: Do good things this week
 
 
-
+<!-- goals weekly end-->
+<!-- goals monthly start-->
 # Monthly Goals August 2017:
 ### This month's focus: Do good things this month
 
   
-
+<!-- goals monthly end-->
+<!-- goals other start-->
 # Other Goals:
 
+<!-- goals other end-->
+```
