@@ -74,22 +74,30 @@ goals cfg dir '/users/me/projects/personal-goals/goals'
 
 goals cfg readme '/users/me/projects/personal-goals/'
 
-goals config weeklyfocus 'getting enough sleep'
+goals config focus weekly 'getting enough sleep'
 
-goals config monthlyfocus 'getting more involved in communities'
+goals config focus weekly 'getting more involved in communities'
 
-goals cfg yearlyfocus 'surviving the nazi-pocalypse'
+goals cfg focus monthly 'surviving the nazi-pocalypse'
+
+goals cfg title weekly 'Shit I need to do this week'
+
+goals cfg type today                    #creates a new goal of type 'today'
+
+goals cfg alias t today                 #creates an alias for today so you can shorten it to 't'
+
+goals cfg clear type t                  #for when you want to delete a goal type  
 
 goals config clear                      #will clear all config settings
 
-goals config clear focus          #will delete the focus
+goals config clear focus                #will delete the all focuses
 
 goals config ls                         #will list the current config settings
 ```
 
 ## Clearing Goals 
 
-You can use `clear` or `clr` to create a new goal followed by the type (`yearly` or `y`, `monthly` or `m`, `weekly` or `w`, `other` or `o`, `completed` or `c`, or `all` or `a`).  
+You can use `clear` or `clr` to clear goal followed by the type (`yearly` or `y`, `monthly` or `m`, `weekly` or `w`, `other` or `o`, `completed` or `c`, or `all` or `a`).  
 
 The default is `all`
 ```
@@ -98,6 +106,19 @@ goals clr                  #deletes all goals
 goals clear weekly         #deletes all weekly goals
 
 goals clr c                #deletes all completed goals
+```
+
+## Deleting Specific Goals 
+
+You can use `delete`, `d`, or `del` to delete a goal followed by the type (`yearly` or `y`, `monthly` or `m`, `weekly` or `w`, `other` or `o`, `completed` or `c`, or `all` or `a`).  
+
+The default is `weekly`
+```
+goals del                  #lists weekly goals anand will allow you to choose which to delete
+
+goals delete y             #lists yearly goals anand will allow you to choose which to delete
+
+goals d month               #lists monthly goals anand will allow you to choose which to delete
 ```
 
 ### README:

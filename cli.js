@@ -7,6 +7,7 @@ const clear = require("./lib/clear");
 const ls = require("./lib/ls").command;
 const complete = require("./lib/complete");
 const newCommand = require("./lib/new");
+const deleteCommand = require("./lib/delete");
 
 yargs // eslint-disable-line no-unused-expressions
   .command(newCommand)
@@ -14,6 +15,7 @@ yargs // eslint-disable-line no-unused-expressions
   .command(ls)
   .command(clear)
   .command(config)
+  .command(deleteCommand)
   .group("weekly (w)", "Types")
   .group("monthly (m)", "Types")
   .group("other (o)", "Types")
