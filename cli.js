@@ -27,12 +27,16 @@ yargs // eslint-disable-line no-unused-expressions
   .example("complete", "$0 c other")
   .example("complete", `$0 complete week 'work out 3 times'`)
   .example("config", "$0 cfg dir '/user/me/projects/personal-goals'")
-  .example("config", `$0 config weeklyfocus 'get outside more'`)
+  .example("config", `$0 config focus weekly 'get outside more'`)
   .example(
     "complete",
-    "$0 config monthlyfocus 'punch as many nazis as possible'"
+    "$0 config focus m 'punch as many nazis as possible'"
   )
-  .example("config", `$0 cfg yearlyfocus 'destroy all nazis'`)
+  .example("config", `$0 cfg focus year 'destroy all nazis'`)
+  .example("config", `$0 config type 'today'`)
+  .example("config", `$0 cfg alias t today`)
+  .example("config", `$0 conf title t 'All the things I want to do today'`)
+  .example("config", `$0 cfg ls`)
   .example("clear", "$0 clear all")
   .example("clear", `$0 clear weekly`)
   .help().argv;
