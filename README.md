@@ -4,7 +4,8 @@ Inspired by [Una Kravets](http://una.im/personal-goals-guide)
 Simple way to create and manage weekly/monthly/yearly/other goals
 
 To use: `yarn global add personal-goals-cli`  
-make sure to set the active directory and where to store your README!
+make sure to set the active directory and where to store your README although they will default to the folder you first call `goals` from.
+
 ```
 goals cfg dir '/users/me/projects/personal-goals/goals'
 
