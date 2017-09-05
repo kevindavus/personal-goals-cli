@@ -41,6 +41,7 @@ yargs // eslint-disable-line no-unused-expressions
   .example("config", `$0 cfg ls`)
   .example("clear", "$0 clear all")
   .example("clear", `$0 clear weekly`)
+  .wrap(null)
   .help().argv;
 
 if (yargs.argv._.length === 0) {
