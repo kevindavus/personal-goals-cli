@@ -75,7 +75,7 @@ goals cfg dir '/users/me/projects/personal-goals/goals'
 
 goals cfg readme '/users/me/projects/personal-goals/'
 
-goals config focus weekly 'getting enough sleep'
+goals conf focus w 'getting enough sleep'
 
 goals config focus weekly 'getting more involved in communities'
 
