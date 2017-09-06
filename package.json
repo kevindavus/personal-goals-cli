@@ -1,6 +1,6 @@
 {
   "name": "personal-goals-cli",
-  "version": "1.3.3",
+  "version": "2.0.0",
   "description": "cli for managing personal goals",
   "main": "cli.js",
   "scripts": {
