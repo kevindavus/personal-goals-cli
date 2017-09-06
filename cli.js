@@ -8,6 +8,7 @@ const ls = require("./lib/ls").command;
 const complete = require("./lib/complete");
 const newCommand = require("./lib/new");
 const deleteCommand = require("./lib/delete");
+const { write } = require("./lib/utils/markdown");
 
 yargs // eslint-disable-line no-unused-expressions
   .command(newCommand)
@@ -30,11 +31,6 @@ yargs // eslint-disable-line no-unused-expressions
   .example("complete", `$0 complete week 'work out 3 times'`)
   .example("config", "$0 cfg dir '/user/me/projects/personal-goals'")
   .example("config", `$0 config focus weekly 'get outside more'`)
-  .example(
-    "complete",
-    "$0 config focus m 'punch as many nazis as possible'"
-  )
-  .example("config", `$0 cfg focus year 'destroy all nazis'`)
   .example("config", `$0 config type 'today'`)
   .example("config", `$0 cfg alias t today`)
   .example("config", `$0 conf title t 'All the things I want to do today'`)
@@ -47,3 +43,5 @@ yargs // eslint-disable-line no-unused-expressions
 if (yargs.argv._.length === 0) {
   yargs.showHelp();
 }
+
+write();
