@@ -113,11 +113,11 @@ You can use `delete`, `d`, or `del` to delete a goal followed by the type (`year
 
 The default is `weekly`
 ```
-goals del                  #lists weekly goals anand will allow you to choose which to delete
+goals del                  #lists weekly goals and will allow you to choose which to delete
 
-goals delete y             #lists yearly goals anand will allow you to choose which to delete
+goals delete y             #lists yearly goals and will allow you to choose which to delete
 
-goals d month               #lists monthly goals anand will allow you to choose which to delete
+goals d month              #lists monthly goals and will allow you to choose which to delete
 ```
 
 For each new goal, a README is generated in the directory specified by the `dir` configuration. You'll see the goals for this project in the `goals` driectory
