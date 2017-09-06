@@ -24,11 +24,15 @@ You can use `new` or `n` to create a new goal followed by the type (`yearly` or 
 
 The default is `weekly`
 ```
-goals new w 'track my personal goals'                     #creates a new weekly goal
+goals new w 'Play with puppies'                           #creates a new weekly goal
 
-goals n other 'contribute to 3 open source projects'      #creates a new 'other' goal
+goals n other 'Work on a cool side project'               #creates a new 'other' goal
 
-goals n y 'survive another year'                          #creates a new yearly goal
+goals n y 'Be kind'                                       #creates a new yearly goal
+
+goals n y 'Contribute to open source'                     
+
+goals n y 'Write more blog posts'                         
 ```
 
 ## Marking a goal as completed
