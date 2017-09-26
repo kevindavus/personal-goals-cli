@@ -1,10 +1,12 @@
+// @flow
+
 const path = require("path");
 const fs = require("fs-extra");
 const Menu = require("terminal-menu");
 const moment = require("moment");
-const { conf, checkConf } = require("./config");
-const { prettyName, getFileName } = require("./utils/file");
-const { write } = require("./utils/markdown");
+const { prettyName, getFileName } = require("../utils/file");
+const { write } = require("../utils/markdown");
+const { checkConf, confTypes, confAliases, confDir } = require("./config");
 const { ls } = require("./ls");
 
 module.exports = {
@@ -12,17 +14,18 @@ module.exports = {
   aliases: ["c"],
   desc: "mark a goal as completed",
   example: "$0 c w ",
-  builder: yargs => yargs.default("type", "w"),
-  handler: argv => {
+  builder: (yargs: { default: (string, string) => mixed }) =>
+    yargs.default("type", "w"),
+  handler: (argv: { type: string, goal: string }) => {
     checkConf();
 
     let type;
-    if (conf.get("types").includes(argv.type)) {
+    if (confTypes.includes(argv.type)) {
       type = argv.type;
-    } else if (typeof conf.get("alias")[argv.type] === "string") {
-      type = conf.get("alias")[argv.type];
+    } else if (typeof confAliases[argv.type] === "string") {
+      type = confAliases[argv.type];
     } else {
-        type = argv.type;
+      type = argv.type;
     }
     if (argv.goal) {
       completeGoal(type, argv.goal);
@@ -32,9 +35,9 @@ module.exports = {
   }
 };
 
-function completeGoal(type, goal) {
+function completeGoal(type, goal): void {
   const date = moment().format("MMMDDYYYYHHmm");
-  const dir = path.join(conf.get("dir"), "completed", type, date);
+  const dir = path.join(confDir, "completed", type, date);
   fs.ensureDirSync(dir);
   fs.moveSync(
     getFileName(type, goal),
@@ -44,12 +47,12 @@ function completeGoal(type, goal) {
   write();
 }
 
-function menu(type) {
+function menu(type): void {
   checkConf();
   const dir = getFileName(type, "");
   fs.ensureDirSync(dir);
   const files = fs.readdirSync(dir);
-  const menu = new Menu({ bg: "black", fg: "white", width: 100}); 
+  const menu = new Menu({ bg: "black", fg: "white", width: 100 });
 
   menu.reset();
   menu.write("Which " + prettyName(type) + " Goal Did You Complete?\n");
@@ -65,10 +68,4 @@ function menu(type) {
     completeGoal(type, label);
   });
   process.stdin.pipe(menu.createStream()).pipe(process.stdout);
-
-  process.stdin.setRawMode(true);
-  menu.on("close", () => {
-    process.stdin.setRawMode(false);
-    process.stdin.end();
-  });
 }

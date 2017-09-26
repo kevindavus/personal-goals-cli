@@ -1,21 +1,23 @@
+//@flow
 const path = require("path");
 const fs = require("fs-extra");
-const { conf, checkConf } = require("./config");
+const { checkConf, confTypes, confAliases, confDir } = require("./config");
 
 module.exports = {
   command: "clear [type]",
   aliases: ["clr"],
   usage: `$0 clear  <w, m, y, o, c, a>`,
   description: `clear goals of a type`,
-  builder: yargs => yargs.default("type", "a"),
-  handler: argv => {
+  builder: (yargs: { default: (string, string) => mixed }) =>
+    yargs.default("type", "a"),
+  handler: (argv: { type: string }) => {
     checkConf();
 
     let type;
-    if (conf.get("types").includes(argv.type)) {
+    if (confTypes.includes(argv.type)) {
       type = argv.type;
-    } else if (typeof conf.get("alias")[argv.type] === "string") {
-      type = conf.get("alias")[argv.type];
+    } else if (typeof confAliases[argv.type] === "string") {
+      type = confAliases[argv.type];
     } else {
       switch (argv.type) {
         case "a":
@@ -34,10 +36,10 @@ module.exports = {
   }
 };
 
-function clear(type) {
+function clear(type: string) {
   if (type === "all") {
-    fs.removeSync(path.join(conf.get("dir")));
+    fs.removeSync(path.join(confDir));
   } else {
-    fs.removeSync(path.join(conf.get("dir"), type));
+    fs.removeSync(path.join(confDir, type));
   }
 }

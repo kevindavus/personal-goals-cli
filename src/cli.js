@@ -1,14 +1,15 @@
 #!/usr/bin/env node
+//@flow
 "use strict";
 
 const yargs = require("yargs");
-const config = require("./lib/config").command;
-const clear = require("./lib/clear");
-const ls = require("./lib/ls").command;
-const complete = require("./lib/complete");
-const newCommand = require("./lib/new");
-const deleteCommand = require("./lib/delete");
-const { write } = require("./lib/utils/markdown");
+const config = require("./commands/config").command;
+const clear = require("./commands/clear");
+const ls = require("./commands/ls").command;
+const complete = require("./commands/complete");
+const newCommand = require("./commands/new");
+const deleteCommand = require("./commands/delete");
+const { write } = require("./utils/markdown");
 
 yargs // eslint-disable-line no-unused-expressions
   .command(newCommand)

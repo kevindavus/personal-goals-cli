@@ -1,10 +1,12 @@
+// @flow
+
 const path = require("path");
 const moment = require("moment");
 const chalk = require("chalk");
 const fs = require("fs-extra");
-const { conf, checkConf } = require("./config");
-const { prettyName, getFileName } = require("./utils/file");
-const { write } = require("./utils/markdown");
+const { prettyName, getFileName } = require("../utils/file");
+const { write } = require("../utils/markdown");
+const { checkConf, confTypes, confAliases } = require("./config");
 
 module.exports = {
   command: {
@@ -12,15 +14,16 @@ module.exports = {
     aliases: ["list"],
     usage: `$0 ls  <w, m, y, o, c, a>`,
     description: `list goals of a type`,
-    builder: yargs => yargs.default("type", "a"),
-    handler: argv => {
+    builder: (yargs: { default: (type: string, value: string) => mixed }) =>
+      yargs.default("type", "a"),
+    handler: (argv: { type: string }) => {
       checkConf();
 
       let type;
-      if (conf.get("types").includes(argv.type)) {
+      if (confTypes.includes(argv.type)) {
         type = argv.type;
-      } else if (typeof conf.get("alias")[argv.type] === "string") {
-        type = conf.get("alias")[argv.type];
+      } else if (typeof confAliases[argv.type] === "string") {
+        type = confAliases[argv.type];
       } else {
         switch (argv.type) {
           case "a":
@@ -41,10 +44,10 @@ module.exports = {
   ls
 };
 
-function ls(type) {
+function ls(type: string): string {
   let res = "";
-  if (typeof conf.get("alias")[type] === "string") {
-    type = conf.get("alias")[type];
+  if (typeof confAliases[type] === "string") {
+    type = confAliases[type];
   } else {
     switch (type) {
       case "a":
@@ -58,16 +61,13 @@ function ls(type) {
         break;
     }
   }
-  const types = conf.get("types");
+  const types: Array<string> = confTypes;
   if (type === "all") {
     types.forEach(thisType => {
       res += ls(thisType);
     });
   } else {
     checkConf();
-    const dir = path.join(conf.get("dir"), type);
-    fs.ensureDir(dir);
-
     const title = prettyName(type) + " Tasks";
     res += "\n" + chalk.bold.underline(title) + "\n";
     res += print(type);
@@ -79,11 +79,9 @@ function ls(type) {
   return res;
 }
 
-function print(type, opts = {}) {
-  const dir = path.join(conf.get("dir"), type);
-  fs.ensureDirSync(dir);
-  const accomplishments = path.join(conf.get("dir"), "accomplishments");
-  fs.ensureDirSync(accomplishments);
+function print(type: string, opts?: { date?: string } = {}): string {
+  const dir = getFileName(type);
+  const accomplishments = getFileName("accomplishments");
   let res = "";
   const files = fs.readdirSync(dir);
   if (files.length === 0) {
@@ -123,6 +121,7 @@ function print(type, opts = {}) {
             moment().get("month")
         ) {
           fs.moveSync(
+            path.join(dir, item),
             path.join(
               accomplishments,
               type,
@@ -137,6 +136,7 @@ function print(type, opts = {}) {
           moment(opts.date, "MMMDDYYYYHHmm").get("year") < moment().get("year")
         ) {
           fs.moveSync(
+            path.join(dir, item),
             path.join(
               accomplishments,
               type,
