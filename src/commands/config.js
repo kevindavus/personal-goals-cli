@@ -74,7 +74,7 @@ const confTitles: {
   other?: string,
   today?: string,
   tomorrow?: string
-} = conf.get("titles");
+} = conf.get("title");
 const confTypes: Array<string> = conf.get("types");
 const confDir: string = conf.get("dir");
 const confReadme: string = conf.get("readme");
@@ -97,7 +97,7 @@ module.exports = {
     ],
     handler: (argv: { key: string, value: string, detail: string }) => {
       let completedTask = false;
-      completedTask = completedTask || maybeClear(argv)
+      completedTask = completedTask || maybeClear(argv);
       completedTask = completedTask || maybeList(argv);
       completedTask = completedTask || maybeAddType(argv);
       completedTask = completedTask || maybeAddFocus(argv);
@@ -105,7 +105,6 @@ module.exports = {
       completedTask = completedTask || maybeAddTitle(argv);
       if (!completedTask) {
         conf.set(argv.key, argv.value);
-        checkConf();
         console.log(chalk.green("Successfully updated green: "));
         console.log(chalk.bold(argv.key), ":", conf.get(argv.key));
       }
@@ -207,8 +206,9 @@ const maybeAddAlias = argv => {
       return true;
     }
   }
-}
-const maybeAddTitle(argv) => {
+};
+
+const maybeAddTitle = argv => {
   if (argv.key === "title" || argv.key === "titles") {
     if (confTypes.includes(argv.value)) {
       confTitles[argv.value] = argv.detail;
@@ -220,7 +220,7 @@ const maybeAddTitle(argv) => {
       return true;
     }
   }
-}
+};
 
 function clearConf(argv: { detail: string, key: string, value: string }): void {
   if (typeof argv.value === "string") {
@@ -328,6 +328,7 @@ function clearConf(argv: { detail: string, key: string, value: string }): void {
     console.log(conf.all);
   }
 }
+
 function checkConf(): void {
   if (!fs.pathExistsSync(confDir)) {
     console.log("setting working directory to ", path.resolve());

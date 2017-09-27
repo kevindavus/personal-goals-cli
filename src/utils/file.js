@@ -7,7 +7,6 @@ const { checkConf, confDir } = require("../commands/config");
 module.exports = {
   getFileName(type: string, goal?: string): string {
     const dir = path.join(confDir, type);
-    checkConf();
     if (typeof goal === "string") {
       return path.join(
         dir,

@@ -17,8 +17,6 @@ module.exports = {
     builder: (yargs: { default: (type: string, value: string) => mixed }) =>
       yargs.default("type", "a"),
     handler: (argv: { type: string }) => {
-      checkConf();
-
       let type;
       if (confTypes.includes(argv.type)) {
         type = argv.type;
@@ -67,7 +65,6 @@ function ls(type: string): string {
       res += ls(thisType);
     });
   } else {
-    checkConf();
     const title = prettyName(type) + " Tasks";
     res += "\n" + chalk.bold.underline(title) + "\n";
     res += print(type);

@@ -2,7 +2,7 @@
   "name": "personal-goals-cli",
   "version": "2.1.1",
   "description": "cli for managing personal goals",
-  "main": "cli.js",
+  "main": "./lib/cli.js",
   "scripts": {
     "lint": "xo --fix"
   },
@@ -21,7 +21,7 @@
     "extends": "prettier"
   },
   "bin": {
-    "goals": "./cli.js"
+    "goals": "./lib/cli.js"
   },
   "author": "kevindavus",
   "license": "MIT",
@@ -52,6 +52,7 @@
     "yargs": "^8.0.2"
   },
   "devDependencies": {
+    "babel-plugin-sitrep": "^1.2.3",
     "babel-preset-env": "^1.6.0",
     "flow-bin": "^0.55.0",
     "gulp-flowtype": "1.0.0"

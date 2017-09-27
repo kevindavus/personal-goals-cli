@@ -109,7 +109,7 @@ function read(): string {
   let idx = readme.search(startPhrase);
   while (idx !== -1) {
     const stats = readme.match(startPhrase);
-    if (typeof stats === "string" && typeof readme === "string") {
+    if (typeof stats === "object" && typeof readme === "string") {
       res += readme.substring(0, idx);
       res += getMDTemplate(stats[1]);
       const goalEnd = readme.search(endSearchPhrase);
@@ -124,6 +124,7 @@ function read(): string {
   }
   return res;
 }
+
 function getMDTemplate(type): string {
   const weeklyFocus = confFocus.weekly;
   let focus = "";
