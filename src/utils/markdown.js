@@ -16,7 +16,7 @@ const prettyName = require("./file").prettyName;
 const date = moment();
 
 module.exports = {
-  write() {
+  write(): void {
     checkConf();
     if (fs.existsSync(path.join(confReadme, "README.md"))) {
       const readme = read();

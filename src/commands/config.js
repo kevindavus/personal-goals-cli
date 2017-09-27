@@ -5,7 +5,7 @@ const fs = require("fs-extra");
 const Configstore = require("configstore");
 const moment = require("moment");
 
-const date = moment();
+const date: moment$Moment = moment();
 const defaultConf: {
   alias: {
     m?: string,
@@ -51,7 +51,10 @@ const defaultConf: {
     tomorrow: `Goals for ${date.add(1, "d").format("dddd, MMMM Do YYYY")}`
   }
 };
-const conf = Configstore("personal-goals-cli", defaultConf);
+const conf: configStore$ConfigStore = new Configstore(
+  "personal-goals-cli",
+  defaultConf
+);
 const chalk = require("chalk");
 
 const confFocus: { weekly: string } = conf.get("focus");
@@ -65,12 +68,12 @@ const confAliases: {
   year?: string
 } = conf.get("alias");
 const confTitles: {
-  weekly: string,
-  monthly: string,
-  yearly: string,
-  other: string,
-  today: string,
-  tomorrow: string
+  weekly?: string,
+  monthly?: string,
+  yearly?: string,
+  other?: string,
+  today?: string,
+  tomorrow?: string
 } = conf.get("titles");
 const confTypes: Array<string> = conf.get("types");
 const confDir: string = conf.get("dir");
@@ -93,87 +96,14 @@ module.exports = {
       "$0 config weeklyfocus 'get outside more'"
     ],
     handler: (argv: { key: string, value: string, detail: string }) => {
-      if (
-        argv.value === "clear" ||
-        argv.value === "clr" ||
-        argv.value === "del" ||
-        argv.value === "delete"
-      ) {
-        const value: string = argv.key;
-        const key: string = argv.value;
-        argv.value = value;
-        argv.key = key;
-        clearConf(argv);
-      } else if (
-        argv.key === "clear" ||
-        argv.key === "clr" ||
-        argv.key === "del" ||
-        argv.key === "delete"
-      ) {
-        clearConf(argv);
-      } else if (argv.key === "ls" || argv.key === "get") {
-        console.log(conf.all);
-      } else if (argv.key === "type" || argv.key === "types") {
-        if (confTypes.includes(argv.value)) {
-          console.log(
-            chalk.red("Error adding new type: "),
-            chalk.bold(argv.value),
-            " already exists as a type"
-          );
-        } else if (typeof confAliases[argv.value] === "string") {
-          console.log(
-            chalk.red("Error adding new type: "),
-            chalk.bold(argv.value),
-            " already exists as an alias to ",
-            chalk.bold(confAliases[argv.value])
-          );
-        } else {
-          confTypes.push(argv.value);
-          conf.set("types", confTypes);
-          console.log(confTypes);
-        }
-      } else if (
-        argv.key === "focus" ||
-        argv.key === "focuses" ||
-        argv.key === "foci"
-      ) {
-        if (confTypes.includes(argv.value)) {
-          confFocus[argv.value] = argv.detail;
-          conf.set("focus", confFocus);
-        } else if (typeof confAliases[argv.value] === "string") {
-          confFocus[confAliases[argv.value]] = argv.detail;
-          conf.set("focus", confFocus);
-          console.log(confFocus);
-        }
-      } else if (argv.key === "alias" || argv.key === "aliases") {
-        if (confTypes.includes(argv.value)) {
-          console.log(
-            chalk.red("Error adding new alias: "),
-            chalk.bold(argv.value),
-            " already exists as a type"
-          );
-        } else if (typeof confAliases[argv.value] === "string") {
-          console.log(
-            chalk.red("Error adding new alias: "),
-            chalk.bold(argv.value),
-            " already exists as an alias to ",
-            chalk.bold(confAliases[argv.value])
-          );
-        } else {
-          confAliases[argv.value] = argv.detail;
-          conf.set("alias", confAliases);
-          console.log(confAliases);
-        }
-      } else if (argv.key === "title" || argv.key === "titles") {
-        if (confTypes.includes(argv.value)) {
-          confTitles[argv.value] = argv.detail;
-          conf.set("titles", confTitles);
-        } else if (typeof confAliases[argv.value] === "string") {
-          confTitles[confAliases[argv.value]] = argv.detail;
-          conf.set("title", confTitles);
-          console.log(confTitles);
-        }
-      } else {
+      let completedTask = false;
+      completedTask = completedTask || maybeClear(argv)
+      completedTask = completedTask || maybeList(argv);
+      completedTask = completedTask || maybeAddType(argv);
+      completedTask = completedTask || maybeAddFocus(argv);
+      completedTask = completedTask || maybeAddAlias(argv);
+      completedTask = completedTask || maybeAddTitle(argv);
+      if (!completedTask) {
         conf.set(argv.key, argv.value);
         checkConf();
         console.log(chalk.green("Successfully updated green: "));
@@ -186,6 +116,112 @@ module.exports = {
 
   conf
 };
+
+const maybeClear = argv => {
+  if (
+    argv.value === "clear" ||
+    argv.value === "clr" ||
+    argv.value === "del" ||
+    argv.value === "delete"
+  ) {
+    const value: string = argv.key;
+    const key: string = argv.value;
+    argv.value = value;
+    argv.key = key;
+    clearConf(argv);
+  } else if (
+    argv.key === "clear" ||
+    argv.key === "clr" ||
+    argv.key === "del" ||
+    argv.key === "delete"
+  ) {
+    clearConf(argv);
+    return true;
+  }
+};
+
+const maybeList = argv => {
+  if (argv.key === "ls" || argv.key === "get") {
+    console.log(conf.all);
+    return true;
+  }
+};
+
+const maybeAddType = argv => {
+  if (argv.key === "type" || argv.key === "types") {
+    if (confTypes.includes(argv.value)) {
+      console.log(
+        chalk.red("Error adding new type: "),
+        chalk.bold(argv.value),
+        " already exists as a type"
+      );
+    } else if (typeof confAliases[argv.value] === "string") {
+      console.log(
+        chalk.red("Error adding new type: "),
+        chalk.bold(argv.value),
+        " already exists as an alias to ",
+        chalk.bold(confAliases[argv.value])
+      );
+    } else {
+      confTypes.push(argv.value);
+      conf.set("types", confTypes);
+      console.log(confTypes);
+      return true;
+    }
+  }
+};
+
+const maybeAddFocus = argv => {
+  if (argv.key === "focus" || argv.key === "focuses" || argv.key === "foci") {
+    if (confTypes.includes(argv.value)) {
+      confFocus[argv.value] = argv.detail;
+      conf.set("focus", confFocus);
+    } else if (typeof confAliases[argv.value] === "string") {
+      confFocus[confAliases[argv.value]] = argv.detail;
+      conf.set("focus", confFocus);
+      console.log(confFocus);
+      return true;
+    }
+  }
+};
+
+const maybeAddAlias = argv => {
+  if (argv.key === "alias" || argv.key === "aliases") {
+    if (confTypes.includes(argv.value)) {
+      console.log(
+        chalk.red("Error adding new alias: "),
+        chalk.bold(argv.value),
+        " already exists as a type"
+      );
+    } else if (typeof confAliases[argv.value] === "string") {
+      console.log(
+        chalk.red("Error adding new alias: "),
+        chalk.bold(argv.value),
+        " already exists as an alias to ",
+        chalk.bold(confAliases[argv.value])
+      );
+    } else {
+      confAliases[argv.value] = argv.detail;
+      conf.set("alias", confAliases);
+      console.log(confAliases);
+      return true;
+    }
+  }
+}
+const maybeAddTitle(argv) => {
+  if (argv.key === "title" || argv.key === "titles") {
+    if (confTypes.includes(argv.value)) {
+      confTitles[argv.value] = argv.detail;
+      conf.set("titles", confTitles);
+    } else if (typeof confAliases[argv.value] === "string") {
+      confTitles[confAliases[argv.value]] = argv.detail;
+      conf.set("title", confTitles);
+      console.log(confTitles);
+      return true;
+    }
+  }
+}
+
 function clearConf(argv: { detail: string, key: string, value: string }): void {
   if (typeof argv.value === "string") {
     if (typeof argv.detail === "string") {
