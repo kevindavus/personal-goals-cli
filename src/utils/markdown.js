@@ -23,7 +23,7 @@ module.exports = {
       fs.truncate(path.join(confReadme, "README.md"), 0, () => {
         fs.writeFile(path.join(confReadme, "README.md"), readme, err => {
           if (err) {
-            return console.log("Error writing file: " + err);
+            return console.error("Error writing file: " + err);
           }
         });
       });
@@ -31,7 +31,7 @@ module.exports = {
       fs.truncate(path.join(confReadme, "README.md"), 0, () => {
         fs.writeFile(path.join(confReadme, "README.md"), generate(), err => {
           if (err) {
-            return console.log("Error writing file: " + err);
+            return console.error("Error writing file: " + err);
           }
         });
       });
@@ -109,7 +109,7 @@ function read(): string {
   let idx = readme.search(startPhrase);
   while (idx !== -1) {
     const stats = readme.match(startPhrase);
-    if (typeof stats === "object" && typeof readme === "string") {
+    if (stats != null && typeof readme === "string") {
       res += readme.substring(0, idx);
       res += getMDTemplate(stats[1]);
       const goalEnd = readme.search(endSearchPhrase);
@@ -118,9 +118,11 @@ function read(): string {
       if (goalEndPhrases != null) {
         goalEndPhrase = goalEndPhrases[0];
         readme = readme.substr(goalEnd + goalEndPhrase.length);
+        idx = readme.search(/<!-- goals (\S+) start-->/i);
+      } else {
+        idx = -1;
       }
     }
-    idx = readme.search(/<!-- goals (\S+) start-->/i);
   }
   return res;
 }

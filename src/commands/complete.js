@@ -5,7 +5,6 @@ const fs = require("fs-extra");
 const Menu = require("terminal-menu");
 const moment = require("moment");
 const { prettyName, getFileName } = require("../utils/file");
-const { write } = require("../utils/markdown");
 const { checkConf, confTypes, confAliases, confDir } = require("./config");
 const { ls } = require("./ls");
 
@@ -19,10 +18,10 @@ module.exports = {
   handler: (argv: { type: string, goal: string }) => {
     checkConf();
 
-    let type;
+    let type: string;
     if (confTypes.includes(argv.type)) {
       type = argv.type;
-    } else if (typeof confAliases[argv.type] === "string") {
+    } else if (confAliases.hasOwnProperty(argv.type)) {
       type = confAliases[argv.type];
     } else {
       type = argv.type;
@@ -35,37 +34,51 @@ module.exports = {
   }
 };
 
-function completeGoal(type, goal): void {
+function completeGoal(type: string, goal: string): void {
   const date = moment().format("MMMDDYYYYHHmm");
   const dir = path.join(confDir, "completed", type, date);
-  fs.ensureDirSync(dir);
-  fs.moveSync(
-    getFileName(type, goal),
-    getFileName(path.join("completed", type, date), goal)
-  );
-  console.log(ls("all"));
-  write();
+
+  fs
+    .move(
+      getFileName(type, goal),
+      getFileName(path.join("completed", type, date), goal)
+    )
+    .then(() => ls("all"));
 }
 
-function menu(type): void {
+async function menu(type: string): Promise<void> {
   checkConf();
   const dir = getFileName(type, "");
-  fs.ensureDirSync(dir);
-  const files = fs.readdirSync(dir);
-  const menu = new Menu({ bg: "black", fg: "white", width: 100 });
+  await fs.ensureDir(dir);
+  const files = await fs.readdir(dir);
+  try {
+    const menu = new Menu({ bg: "black", fg: "white", width: 100 });
 
-  menu.reset();
-  menu.write("Which " + prettyName(type) + " Goal Did You Complete?\n");
-  menu.write("-------------------------------------\n");
-  files.map(item => menu.add(prettyName(item)));
-  menu.add("None");
+    menu.reset();
+    menu.write("Which " + prettyName(type) + " Goal Did You Complete?\n");
+    menu.write("-------------------------------------\n");
+    files.map((item: string) => {
+      if (!item.startsWith(".")) {
+        menu.add(prettyName(item));
+      }
+    });
+    menu.add("None");
 
-  menu.on("select", label => {
-    menu.close();
-    if (label === "None") {
-      return;
-    }
-    completeGoal(type, label);
-  });
-  process.stdin.pipe(menu.createStream()).pipe(process.stdout);
+    menu.on("select", (label: string) => {
+      menu.close();
+      if (label === "None") {
+        return;
+      }
+      completeGoal(type, label);
+    });
+    process.stdin.pipe(menu.createStream()).pipe(process.stdout);
+
+    process.stdin.setRawMode(true);
+    menu.on("close", () => {
+      process.stdin.setRawMode(false);
+      process.stdin.end();
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }

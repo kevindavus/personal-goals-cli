@@ -4,7 +4,9 @@
   "description": "cli for managing personal goals",
   "main": "./lib/cli.js",
   "scripts": {
-    "lint": "xo --fix"
+    "lint": "xo --fix",
+    "watch": "gulp watch",
+    "babel": "gulp scripts"
   },
   "repository": {
     "type": "git",
@@ -29,9 +31,12 @@
     "url": "https://github.com/kevindavus/personal-goals-cli/issues"
   },
   "homepage": "https://github.com/kevindavus/personal-goals-cli#readme",
-  "dependencies": {
+  "devDependencies": {
+    "babel-plugin-sitrep": "^1.2.3",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-flow-strip-types": "6.21.0",
-    "babel-polyfill": "6.20.0",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-latest": "6.16.0",
     "chalk": "^2.1.0",
@@ -39,22 +44,18 @@
     "eslint": "^4.5.0",
     "eslint-config-prettier": "^2.4.0",
     "eslint-plugin-prettier": "^2.2.0",
+    "flow-bin": "^0.55.0",
     "fs-extra": "^4.0.1",
     "global": "^4.3.2",
     "gulp": "^3.9.1",
     "gulp-babel": "6.1.2",
+    "gulp-flowtype": "1.0.0",
     "gulp-sourcemaps": "1.9.1",
     "moment": "^2.18.1",
     "prettier": "^1.6.1",
-    "recursive-readdir-sync": "^1.0.6",
+    "recursive-readdir": "^2.2.1",
     "terminal-menu": "^2.1.1",
     "xo": "^0.18.2",
-    "yargs": "^8.0.2"
-  },
-  "devDependencies": {
-    "babel-plugin-sitrep": "^1.2.3",
-    "babel-preset-env": "^1.6.0",
-    "flow-bin": "^0.55.0",
-    "gulp-flowtype": "1.0.0"
+    "yargs": "^7.0.0"
   }
 }

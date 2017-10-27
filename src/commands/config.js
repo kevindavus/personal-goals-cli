@@ -51,29 +51,26 @@ const defaultConf: {
     tomorrow: `Goals for ${date.add(1, "d").format("dddd, MMMM Do YYYY")}`
   }
 };
-const conf: configStore$ConfigStore = new Configstore(
-  "personal-goals-cli",
-  defaultConf
-);
+const conf: Configstore = new Configstore("personal-goals-cli", defaultConf);
 const chalk = require("chalk");
 
 const confFocus: { weekly: string } = conf.get("focus");
 const confAliases: {
-  w?: string,
-  o?: string,
-  m?: string,
-  y?: string,
-  week?: string,
-  month?: string,
-  year?: string
+  w: string,
+  o: string,
+  m: string,
+  y: string,
+  week: string,
+  month: string,
+  year: string
 } = conf.get("alias");
 const confTitles: {
-  weekly?: string,
-  monthly?: string,
-  yearly?: string,
-  other?: string,
-  today?: string,
-  tomorrow?: string
+  weekly: string,
+  monthly: string,
+  yearly: string,
+  other: string,
+  today: string,
+  tomorrow: string
 } = conf.get("title");
 const confTypes: Array<string> = conf.get("types");
 const confDir: string = conf.get("dir");

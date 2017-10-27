@@ -322,7 +322,13 @@ declare class fs$fs {
     path: string | Buffer,
     callback: (err: NodeJS.ErrnoException | null, stats: Stats) => any
   ): void,
-  static lstat(path: string | Buffer): Promise<Stats>,
+  static lstat(path: string | Buffer): Stats,
+
+  static lstatSync(
+    path: string | Buffer,
+    callback: (err: NodeJS.ErrnoException | null, stats: Stats) => any
+  ): void,
+  static lstatSync(path: string | Buffer): Stats,
 
   static mkdir(
     path: string | Buffer,

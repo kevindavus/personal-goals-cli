@@ -4,6 +4,7 @@ const sourcemaps = require("gulp-sourcemaps");
 const flow = require("gulp-flowtype");
 
 gulp.task("scripts", () => {
+  console.log('babel');
   return gulp
     .src("src/**/*.js")
     .pipe(sourcemaps.init())

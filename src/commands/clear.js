@@ -2,6 +2,7 @@
 const path = require("path");
 const fs = require("fs-extra");
 const { checkConf, confTypes, confAliases, confDir } = require("./config");
+const {ls} = require("./ls")
 
 module.exports = {
   command: "clear [type]",
@@ -13,7 +14,7 @@ module.exports = {
   handler: (argv: { type: string }) => {
     checkConf();
 
-    let type;
+    let type: string;
     if (confTypes.includes(argv.type)) {
       type = argv.type;
     } else if (typeof confAliases[argv.type] === "string") {
@@ -33,6 +34,7 @@ module.exports = {
       }
     }
     clear(type);
+    ls("all")
   }
 };
 

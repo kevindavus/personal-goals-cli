@@ -13,16 +13,58 @@
  * https://github.com/flowtype/flow-typed
  */
 
-declare module "chalk" {
-  declare module.exports: any;
-}
-
 declare class chalk$chalk {
+  static reset(string: string): string,
+
   static bold(string: string): string,
-  static green(string: string): string,
+
+  static dim(string: string): string,
+
+  static italic(string: string): string,
+
   static underline(string: string): string,
+
+  static inverse(string: string): string,
+
+  static hidden(string: string): string,
+
+  static strikethrough(string: string): string,
+
+  static black(string: string): string,
+
+  static red(string: string): string,
+
+  static green(string: string): string,
+
+  static yellow(string: string): string,
+
+  static blue(string: string): string,
+
+  static magenta(string: string): string,
+
+  static cyan(string: string): string,
+
+  static white(string: string): string,
+
   static gray(string: string): string,
-  static red(string: string): string
+
+  static grey(string: string): string,
+
+  static bgBlack(string: string): string,
+
+  static bgRed(string: string): string,
+
+  static bgGreen(string: string): string,
+
+  static bgYellow(string: string): string,
+
+  static bgBlue(string: string): string,
+
+  static bgMagenta(string: string): string,
+
+  static bgCyan(string: string): string,
+
+  static bgWhite: chalk$chalk
 }
 
 declare module "chalk" {

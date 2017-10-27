@@ -1,19 +1,17 @@
 // @flow
 
 const path = require("path");
-const fs = require("fs-extra");
 const { checkConf, confDir } = require("../commands/config");
 
 module.exports = {
-  getFileName(type: string, goal?: string): string {
+  getFileName(type: string, goal?: string = ""): string {
     const dir = path.join(confDir, type);
-    if (typeof goal === "string") {
+    if (goal.length > 0) {
       return path.join(
         dir,
         goal.replace(/[ ]/g, "_").replace(/[//]/g, "-") + ".md"
       );
     }
-    fs.ensureDirSync(dir);
     return dir;
   },
 
