@@ -41,9 +41,8 @@ function deleteGoal(type: string, goal: string) {
     type = path.join("completed", type);
     findCompletedFile(type, goal);
   } else {
-    fs.remove(getFileName(type, goal));
+    fs.remove(getFileName(type, goal)).then(() => ls("all"));
   }
-  ls("all");
 }
 
 async function menu(type) {
@@ -74,7 +73,7 @@ async function menu(type) {
         deleteGoal(type, label);
       });
       process.stdin.pipe(menu.createStream()).pipe(process.stdout);
-  
+
       process.stdin.setRawMode(true);
       menu.on("close", () => {
         process.stdin.setRawMode(false);
