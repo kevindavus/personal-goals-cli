@@ -62,16 +62,11 @@ async function ls(type: string): Promise<void> {
 
   const types: Array<string> = confTypes;
   if (type === "all") {
-    for(let i = 0; i < 3; i++) {
-        console.log('\r\n');
-    }
+    console.log("\r\n");
     //list all known types
     types.map(async thisType => {
       await ls(thisType);
     });
-    for(let i = 0; i < 3; i++) {
-        console.log('\r\n');
-    }
   } else {
     //list specified type
     const title = prettyName(type) + " Tasks";
@@ -208,7 +203,10 @@ async function isCurrent(
     );
     return "";
   }
-  return `${chalk.green(prettyName(item))} ${chalk.gray(
-    "- " + moment(date, "MMMDDYYYYHHmm").fromNow()
-  )}\n`;
+  if (!item.startsWith(".")) {
+    return `${chalk.green(prettyName(item))} ${chalk.gray(
+      "- " + moment(date, "MMMDDYYYYHHmm").fromNow()
+    )}\n`;
+  }
+  return "";
 }
