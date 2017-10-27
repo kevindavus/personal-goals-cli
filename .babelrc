@@ -1,4 +1,4 @@
 {
-  "presets": ["latest", "flow"],
-  "plugins": ["transform-flow-strip-types"]
+  "presets": ["flow"],
+  "plugins": ["transform-flow-strip-types", "sitrep", "transform-async-to-generator"]
 }
