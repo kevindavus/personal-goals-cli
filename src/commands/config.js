@@ -327,6 +327,10 @@ function clearConf(argv: { detail: string, key: string, value: string }): void {
 }
 
 function checkConf(): void {
+  if (confTitles.monthly.startsWith("Things I'll Do This Month (")) {    
+    confTitles.monthly = `Things I'll Do This Month (${date.format("MMMM YYYY")}) `;
+    conf.set("title", confTitles);
+  }
   if (!fs.pathExistsSync(confDir)) {
     console.log("setting working directory to ", path.resolve());
     conf.set("dir", path.resolve("goals"));

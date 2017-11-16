@@ -6,6 +6,7 @@ const chalk = require("chalk");
 const fs = require("fs-extra");
 const { prettyName, getFileName } = require("../utils/file");
 const { checkConf, confTypes, confAliases } = require("./config");
+const { write } = require("../utils/markdown")
 
 module.exports = {
   command: {
@@ -36,6 +37,7 @@ module.exports = {
         }
       }
       ls(type);
+      write();
     }
   },
   ls
