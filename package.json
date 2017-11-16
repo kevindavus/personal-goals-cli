@@ -31,7 +31,7 @@
     "url": "https://github.com/kevindavus/personal-goals-cli/issues"
   },
   "homepage": "https://github.com/kevindavus/personal-goals-cli#readme",
-  "devDependencies": {
+  "dependencies": {
     "chalk": "^2.1.0",
     "configstore": "^3.1.1",
     "fs-extra": "^4.0.1",
@@ -41,7 +41,7 @@
     "terminal-menu": "^2.1.1",
     "yargs": "^7.0.0"
   },
-  "dependencies": {
+  "devDependencies": {
     "babel-plugin-sitrep": "^1.2.3",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-flow-strip-types": "6.21.0",
