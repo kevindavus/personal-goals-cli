@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs-extra");
 const { checkConf, confTypes, confAliases, confDir } = require("./config");
 const {ls} = require("./ls")
+const { write } = require("../utils/markdown");
 
 module.exports = {
   command: "clear [type]",
@@ -34,14 +35,19 @@ module.exports = {
       }
     }
     clear(type);
-    ls("all")
   }
 };
 
 function clear(type: string) {
   if (type === "all") {
-    fs.removeSync(path.join(confDir));
+    fs.remove(path.join(confDir)).then(() => {
+      ls("all");
+      write()
+    })
   } else {
-    fs.removeSync(path.join(confDir, type));
+    fs.remove(path.join(confDir, type)).then(() => {
+      ls("all");
+      write()
+    });
   }
 }

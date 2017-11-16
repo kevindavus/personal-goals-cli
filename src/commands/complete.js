@@ -7,6 +7,7 @@ const moment = require("moment");
 const { prettyName, getFileName } = require("../utils/file");
 const { checkConf, confTypes, confAliases, confDir } = require("./config");
 const { ls } = require("./ls");
+const { write } = require("../utils/markdown");
 
 module.exports = {
   command: "complete [type] [goal]",
@@ -43,7 +44,10 @@ function completeGoal(type: string, goal: string): void {
       getFileName(type, goal),
       getFileName(path.join("completed", type, date), goal)
     )
-    .then(() => ls("all"));
+    .then(() => {
+      ls("all")
+      write();
+    });
 }
 
 async function menu(type: string): Promise<void> {

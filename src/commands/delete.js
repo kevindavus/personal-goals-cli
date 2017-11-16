@@ -8,6 +8,7 @@ const recursive = require("recursive-readdir");
 const { prettyName, getFileName } = require("../utils/file");
 const { checkConf, confTypes, confAliases, confDir } = require("./config");
 const { ls } = require("./ls");
+const { write } = require("../utils/markdown");
 
 module.exports = {
   command: "delete [type] [goal]",
@@ -41,7 +42,10 @@ function deleteGoal(type: string, goal: string) {
     type = path.join("completed", type);
     findCompletedFile(type, goal);
   } else {
-    fs.remove(getFileName(type, goal)).then(() => ls("all"));
+    fs.remove(getFileName(type, goal)).then(() => {
+      ls("all");
+      write();
+    });
   }
 }
 
@@ -49,9 +53,13 @@ async function menu(type) {
   checkConf();
   const dir = getFileName(type, "");
   const completedDir = getFileName(path.join("completed", type));
+  await fs.ensureDir(completedDir);
+  await fs.ensureDir(dir);
   const files = await fs.readdir(dir);
   const completedFiles = await recursive(completedDir);
-  const isEmpty = files.length === 0 && completedFiles.length === 0;
+  const dirIsEmpty = files.length === 0;
+  const completedDirIsEmpty = completedFiles.length === 0;
+  const isEmpty = dirIsEmpty && completedDirIsEmpty;
   const menu = new Menu({ bg: "black", fg: "white", width: 100 });
 
   menu.reset();
@@ -59,10 +67,12 @@ async function menu(type) {
   menu.write("-------------------------------------\n");
   try {
     if (!isEmpty) {
-      files.forEach(item => menu.add(prettyName(item)));
-
-      completedFiles.forEach(item => menu.add("✔︎ " + prettyName(item)));
-
+      if (!dirIsEmpty) {
+        files.forEach(item => menu.add(prettyName(item)));
+      }
+      if (!completedDirIsEmpty) {
+        completedFiles.forEach(item => menu.add("✔︎ " + prettyName(item)));
+      }
       menu.add("None");
 
       menu.on("select", label => {
@@ -102,7 +112,10 @@ function findCompletedFile(type, goal) {
             return findCompletedFile(path.join(type, item), goal);
           } else if (stats.isFile()) {
             if (prettyName(item) === prettyName(goal)) {
-              return fs.remove(dir);
+              return fs.remove(dir).then(() => {
+                ls("all");
+                write();
+              });
             }
           }
         });

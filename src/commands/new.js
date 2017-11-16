@@ -6,6 +6,7 @@ const fs = require("fs-extra");
 const { getFileName } = require("../utils/file");
 const { checkConf, confTypes, confAliases, confDir } = require("./config");
 const {ls} = require("./ls")
+const { write } = require("../utils/markdown");
 
 module.exports = {
   command: "new [type] [goal]",
@@ -25,6 +26,7 @@ module.exports = {
     }
     await newGoal(type, argv.goal);
     ls("all");
+    write();
   }
 };
 

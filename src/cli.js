@@ -9,7 +9,6 @@ const ls = require("./commands/ls").command;
 const complete = require("./commands/complete");
 const newCommand = require("./commands/new");
 const deleteCommand = require("./commands/delete");
-const { write } = require("./utils/markdown");
 
 yargs // eslint-disable-line no-unused-expressions
   .command(newCommand)
@@ -45,4 +44,3 @@ if (yargs.argv._.length === 0) {
   yargs.showHelp();
 }
 
-write();
